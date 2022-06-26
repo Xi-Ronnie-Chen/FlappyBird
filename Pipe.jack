@@ -1,0 +1,72 @@
+/** Implements vertical pipes */
+class Pipe {
+
+    field int m_gap;    // gap size
+    field int m_width;  // width of the pipe
+    field int m_step;   // y coordinate step size for each level
+    field int m_x;      // pipe position on x-axis
+    field int m_y;      // staring position of the gap on y-axis
+
+    /** Constructs the pipe */
+    constructor Pipe new(int level) {
+        let m_gap = 56;
+        let m_width = 16;
+        let m_step = (200 - m_gap) / 9;
+        let m_x = 494;            // start from the right
+        let m_y = calc_y(level);  // level: 0-9 from RNG
+        do draw();
+        return this;
+    }
+
+    /** Deallocates the object's memory */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Get x coordinate */
+    method int get_x() {
+        return m_x;
+    }
+
+    /** Calculate y coordinate based on level 0-9 */
+    method int calc_y(int level) {
+        return (28 + (level*m_step));
+    }
+
+    /** Draw the pipe on the screen */
+    method void draw() {
+        if (m_x < 0) {
+            return;
+        }
+        do Screen.setColor(true);
+        do Screen.drawRectangle(m_x, 18, m_x + m_width, m_y - 1);
+        do Screen.drawRectangle(m_x, m_y + m_gap, m_x + m_width, 237); 
+        return;
+    }
+
+    /** Erase the pipe from the screen */
+    method void erase() {
+        if (m_x < 0) {
+            return;
+        }
+        do Screen.setColor(false);
+        do Screen.drawRectangle(m_x, 18, m_x + m_width, m_y - 1);
+        do Screen.drawRectangle(m_x, m_y + m_gap, m_x + m_width, 237); 
+        return;
+    }
+    
+    /** Moves the pipe left by 2 pixels */
+    method void move_left() {
+        do erase();
+        let m_x = m_x - 2;
+        do draw();
+        return;
+    }
+
+    /** Checks whether the pipe is out of the boundary */
+    method boolean is_out() {
+        return (m_x < 2);
+    }
+
+}

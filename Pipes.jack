@@ -1,0 +1,68 @@
+/** Implement pipes class */
+class Pipes {
+
+    field int m_n;             // capacity of the data array
+    field Array m_data;        // array to contain the data
+    field int m_head, m_tail;  // array index for the head and tail
+    field Rand m_rng;          // random number generator
+
+    /** Constructs an array of pipes */
+    constructor Pipes new(int n) {
+        let m_n = n;
+        let m_data = Array.new(m_n);
+        let m_head = 0;
+        let m_tail = m_head;
+        let m_rng = Rand.new(141, 33, 0, 251);
+        return this;
+    }
+
+    /** Deallocates the object's memory */
+    method void dispose() {
+        var int i_curr;
+        var Pipe p;
+        // Rand
+        do m_rng.dispose();
+        // Array of Pipe
+        let i_curr = m_head;
+        while (~(i_curr = m_tail)) {
+            let p = m_data[i_curr];
+            do p.dispose();
+            let i_curr = MyMath.mod(i_curr + 1, m_n);
+        }
+        do m_data.dispose();
+        // this object
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Pushes a new pipe into the array */
+    method void push_back() {
+        var int level, new_tail;
+        var Pipe p;
+        // generate the next random "vertical gap"
+        let level = m_rng.next() / 26;
+        let m_data[m_tail] = Pipe.new(level);
+        let new_tail = MyMath.mod(m_tail + 1, m_n);
+        if (new_tail = m_head) {
+            let p = m_data[m_head];
+            do p.dispose();
+            let m_head = MyMath.mod(m_head + 1, m_n);
+        }
+        let m_tail = new_tail;
+        return;
+    }
+
+    /** Move pipes to the left */
+    method void move_left() {
+        var int i_curr;
+        var Pipe p;
+        let i_curr = m_head;
+        while (~(i_curr = m_tail)) {
+            let p = m_data[i_curr];
+            do p.move_left();
+            let i_curr = MyMath.mod(i_curr + 1, m_n);
+        }
+        return;
+    }
+
+}

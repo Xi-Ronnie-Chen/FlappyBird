@@ -1,0 +1,12 @@
+/** Customized math class */
+
+class MyMath {
+
+    /** returns x % y */
+    function int mod(int x, int y) {
+        var int m;
+        let m = Math.divide(x, y);
+        return x - (y * m);
+    }
+
+}

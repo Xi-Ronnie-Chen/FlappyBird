@@ -1,0 +1,101 @@
+/** Implements a graphical bird. */
+class Bird {
+
+    // screen location of the bird's top-left corner
+    field int m_x, m_y;
+
+    /** Contructs a new bird */
+    constructor Bird new(int x, int y) {
+        let m_x = x;
+        let m_y = y;
+        do draw();
+        return this;
+    }
+
+    /** Disposes this bird */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Draws the bird on the screen. */
+    method void draw() {
+        var int memAddress;
+        let memAddress = get_mem_address();
+        do Memory.poke(memAddress+0, 0);
+        do Memory.poke(memAddress+32, 0);
+        do Memory.poke(memAddress+64, 992);
+        do Memory.poke(memAddress+96, 1808);
+        do Memory.poke(memAddress+128, 2184);
+        do Memory.poke(memAddress+160, 5262);
+        do Memory.poke(memAddress+192, 5265);
+        do Memory.poke(memAddress+224, 4369);
+        do Memory.poke(memAddress+256, 32265);
+        do Memory.poke(memAddress+288, -32506);
+        do Memory.poke(memAddress+320, -380);
+        do Memory.poke(memAddress+352, 16648);
+        do Memory.poke(memAddress+384, 15888);
+        do Memory.poke(memAddress+416, 480);
+        do Memory.poke(memAddress+448, 0);
+        do Memory.poke(memAddress+480, 0);
+        return;
+    }
+
+    /** Draws the bird on the screen. */
+    method void erase () {
+        var int memAddress;
+        let memAddress = get_mem_address();
+        do Memory.poke(memAddress+0, 0);
+        do Memory.poke(memAddress+32, 0);
+        do Memory.poke(memAddress+64, 0);
+        do Memory.poke(memAddress+96, 0);
+        do Memory.poke(memAddress+128, 0);
+        do Memory.poke(memAddress+160, 0);
+        do Memory.poke(memAddress+192, 0);
+        do Memory.poke(memAddress+224, 0);
+        do Memory.poke(memAddress+256, 0);
+        do Memory.poke(memAddress+288, 0);
+        do Memory.poke(memAddress+320, 0);
+        do Memory.poke(memAddress+352, 0);
+        do Memory.poke(memAddress+384, 0);
+        do Memory.poke(memAddress+416, 0);
+        do Memory.poke(memAddress+448, 0);
+        do Memory.poke(memAddress+480, 0);
+        return;
+    }
+
+    /** bird fly */
+    method void fly() {
+        do erase();
+        let m_y = m_y - 23;  // flying speed
+        if (m_y < 19) {      // reach the upper boundary
+            let m_y = 19;
+        }
+        do draw();
+        return;
+    }
+
+    /** bird fall due to "gravity" */
+    method void fall() {
+        do erase();
+        let m_y = m_y + 2;  // falling speed
+        if (m_y > 222) {    // reach the lower boundary
+            let m_y = 222;
+        }
+        do draw();
+        return;
+    }
+
+    /** checks whether the bird has hit a boundary or not */
+    method boolean is_alive() {
+        var int upper_boundary, lower_boundary;
+        let upper_boundary = Memory.peek(16384+m_x+((m_y-1)*32));
+        let lower_boundary = Memory.peek(16384+m_x+((m_y+16)*32));
+        return ((upper_boundary = 0) & (lower_boundary = 0));
+    }
+
+    /** helper method(s) */
+    method int get_mem_address() {
+        return 16384 + m_x + (m_y * 32);
+    }
+}

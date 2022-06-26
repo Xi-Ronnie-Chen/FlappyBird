@@ -1,0 +1,110 @@
+/** Implements the Flappy Bird game. */
+class Game {
+
+    field Bird m_bird;
+    field Pipes m_pipes;
+    field Score m_score;
+
+    /** Constructs a new game */
+    constructor Game new() {
+        let m_bird = Bird.new(15, 110);
+        let m_pipes = Pipes.new(5);
+        let m_score = Score.new(15);
+        // scoreboard
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0, 15, 511, 17);
+        do Output.moveCursor(0, 27);
+        do Output.printString("Flappy Bird");
+        do Screen.drawRectangle(0, 238, 511, 240);
+        do Output.moveCursor(22, 28);
+        do Output.printString("Score: 0");
+        return this;
+    }
+
+    /** Disposes the game */
+    method void dispose() {
+        do m_score.dispose();
+        do m_pipes.dispose();
+        do m_bird.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Default movements */
+    method void move() {
+        do m_bird.fall();
+        do m_pipes.move_left();
+        do m_score.update();
+        return;
+    }
+
+    /** Runs the game */
+    method void run() {
+        var char last_key, key;
+        var boolean exit, is_alive;
+        var int count;
+        let last_key = 0;
+        let key = 0;
+        let exit = false;
+        let is_alive = true;
+        let count = 0;
+
+        // waiting user's input to start the game
+        do Output.moveCursor(14, 16);
+        do Output.printString("Press any key to start the game.");
+        do Output.moveCursor(15, 14);
+        do Output.printString("(space key: jump | q: quit the game)");
+        // waiting for the user to press a key
+        while (key = 0) { let key = Keyboard.keyPressed(); }
+        // waiting for the user to release the key
+        while (~(key = 0)) { let key = Keyboard.keyPressed(); }
+        // clean-up the screen
+        do Screen.setColor(false);
+        do Screen.drawRectangle(96, 155, 400, 180);
+
+        // push in a pipe
+        do m_pipes.push_back();
+
+        // the game starts running
+        while ((~exit) & is_alive) {
+            // user input
+            let last_key = key;
+            let key = Keyboard.keyPressed();
+            // a new key encountered
+            if (~(key = last_key)) {
+                // q key
+                if (key = 81) { let exit = true; }
+                // space key
+                if (key = 32) { do m_bird.fly(); }
+                // pressed key released
+                if (key = 0) { do move(); }
+            }
+            else {
+                do move();
+            }
+            // check whether the game is still alive
+            let is_alive = m_bird.is_alive();
+            // print score to the screen
+            do Output.moveCursor(22, 35);
+            do Output.printInt(m_score.get());
+            // count number of moves
+            let count = count + 1;
+            // add a new pipe if applicable
+            if (count = 75) {
+                do m_pipes.push_back();
+                let count = 0;
+            }
+            // system pause
+            do Sys.wait(50);
+        }
+
+        // ending message
+        do Screen.setColor(false);
+        do Screen.drawRectangle(0, 0, 511, 14);
+        do Output.moveCursor(0, 28);
+        do Output.printString("Game Over");
+
+        return;
+    }
+
+}

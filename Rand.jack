@@ -1,0 +1,29 @@
+/** Random Number Generator (LCG) */
+
+class Rand {
+
+    // fields for the linear congruential generator
+    field int m_x, m_a, m_c, m_m;
+
+    /** Constructs the random number generation class */
+    constructor Rand new(int seed, int a, int c, int m) {
+        let m_x = seed;
+        let m_a = a;
+        let m_c = c;
+        let m_m = m;
+        return this;
+    }
+
+    /** Deallocates the object's memory */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+    
+    /** Generates the next random number */
+    method int next() {
+        let m_x = MyMath.mod(((m_a * m_x) +  m_c), m_m);
+        return m_x;
+    }
+
+}

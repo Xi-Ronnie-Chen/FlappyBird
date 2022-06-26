@@ -1,0 +1,42 @@
+/** Implements the score recorder */
+class Score {
+
+    // checking val above the bird
+    field int m_addr, m_last_val, m_val;  
+    // record the score
+    field int m_score;
+
+    /** Constructs the score recorder */
+    constructor Score new (int x) {
+        // NOTE: x: bird's location on x-axis
+        // addr: 16-bit val above the bird and 
+        //       next to the upper boundary
+        let m_addr = 16384 + x + (18*32);
+        let m_val = 0; 
+        let m_last_val = 0;
+        let m_score = 0;
+        return this;
+    }
+
+    /** Deallocate this object's memory */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Update the score recorder */
+    method void update() {
+        let m_last_val = m_val;
+        let m_val = Memory.peek(m_addr);
+        if ( (m_val = 0) & (~(m_last_val = 0)) ) {
+            let m_score = m_score + 1;
+        }
+        return;
+    }
+
+    /** Read the current score */
+    method int get() {
+        return m_score;
+    }
+
+}
