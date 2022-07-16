@@ -2,20 +2,10 @@
 class Main {
     function void main () {
         var Game game;
+
         let game = Game.new();
         do game.run();
         do game.dispose();
-
-        // var int i;
-        // var Rand rng;
-        // let i = 0;
-        // let rng = Rand.new(141, 33, 0, 251);
-        // while (i < 20) {
-        //     do Output.printInt(rng.next()/26);
-        //     do Output.println();
-        //     let i = i + 1;
-        // }
-        // do rng.dispose();
 
         return;
     }
